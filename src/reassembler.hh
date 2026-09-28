@@ -2,11 +2,15 @@
 
 #include "byte_stream.hh"
 
+#include <map>
+
 class Reassembler
 {
 public:
   // Construct Reassembler to write into given ByteStream.
-  explicit Reassembler( ByteStream&& output ) : output_( std::move( output ) ) {}
+  explicit Reassembler( ByteStream&& output )
+    : count_bytes_pending_( 0 ), last_index_( MAX_LEN ), pending_substrings_(), output_( std::move( output ) )
+  {}
 
   /*
    * Insert a new substring to be reassembled into a ByteStream.
@@ -40,6 +44,11 @@ public:
 
   // Access output stream writer, but const-only (can't write from outside)
   const Writer& writer() const { return output_.writer(); }
+
+protected:
+  uint64_t count_bytes_pending_ {}; // Number of bytes pending in the Reassembler itself (not yet written to output)
+  uint64_t last_index_ {};          // The index of the last byte written to the output stream
+  std::map<uint64_t, std::string> pending_substrings_; // Map of first_index to substring for pending substrings
 
 private:
   ByteStream output_;
