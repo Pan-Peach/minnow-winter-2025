@@ -38,6 +38,7 @@ public:
   // This function is for testing only; don't add extra state to support it.
   uint64_t count_bytes_pending() const;
 
+  void set_error() { output_.set_error(); }
   // Access output stream reader
   Reader& reader() { return output_.reader(); }
   const Reader& reader() const { return output_.reader(); }
